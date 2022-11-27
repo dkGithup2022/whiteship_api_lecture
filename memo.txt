@@ -2,7 +2,7 @@
 
 강의 메모 + 코딩하면서 알게된거 정리
 
-챕터 2
+챕터 1
  - 객체 생성 시 builder 고려
  - euqals and hashCode 어노테이션 사용 시, 연관관계와 관련된 칼럼은 안쓰는게 좋음
     - 따라서, equalsAndHashCode 가 내장되어 있는 Data 어노테이션도 엔티티엔 쓰지 말아라
@@ -25,3 +25,106 @@
     - 를 메인 앱 클래스에 박아버리면 WebMvcTest 와 충돌이 날 수 있음.
     - 이런 경우, @ComponentScan, @EnableRepositories 같은 어노테이션를 관리하는 컨피겨레이션 클래스를
     별도로 두는 것이 권장됨.
+
+
+챕터 2
+    - linkTo
+        -> spring-starter-hateous 에서 제공하는 기능
+        -> 기능 : 클래스, 메소드에 적용된 URI 정보를 생산함. string 으로 그때그떄 만들어서 실수하지 말라는 취지로 보인다.
+        -> 생성된 URI 는 _links 에 중첩해서 표햔할 수도 있고, 헤더에 넣을수도 있다.
+        -> 지금까지 강의에서 사용된 기능은 헤더에 추가하는 거였음
+          ResponseEntity.created(createdUri).build();
+                -> response 의 헤더에 적용함.
+
+    - mockMvc 기능
+        - mockMvc 에서는 요청을 흉내내는 기능을 제공함. 아래는 예시. 조건을 이어붙이는 식으로 타이핑함
+        mockMvc.perform(
+        post()
+            .contentType(MediaType.APPLICATION_JSON)
+            .accecpt(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(event))
+        )
+        .andExpect(status().iscreated())
+        .andDo(print());
+
+        perform 의 인자에는 요청에 대한 조건들 ( 헤더, 바디, 요청 형식) 을 집어 넣고
+        리턴값에는 기대하는 프로퍼티를 검사한다.
+
+    - Mockito 사용예시
+        - 단위테스트, 부분(WebMvcTest ) 테스트에서 쓰이는 방법
+        - 실제 만들어진 빈을 주입받는게 아니라, mock 객체를 만들어둠.
+        - 실제 클래스 정보는 없기때문에, 구현 (인풋, 리턴에 대한 설정 ) 은 직접 해야함.
+
+        @MockBean
+        EventRepository eventRepository;
+
+        @Test
+        public void someTest(){
+            Mockito.when(eventRepository.save(event)).thenReturn(event);
+
+            mockMvc.perform(get("/api/someApi")).andExpect(...);
+        }
+        => 이러면 /api/someApi/ 경로의 컨트롤러가 실행될때, eventRepository.save(event) 의 리턴값이
+        => 위에 when 내용으로 제공이 됨.
+
+   - mockMvc.perform().andExpect() 강화판 예시
+
+    mockMvc.perform(post("/api/events")
+    .contentType(MediaType.APPLICATION_JSON)
+    .accecpt(MediaType.APPLICATION_JSON)
+    .content(objectMapper.writeValueAsString(event))
+    )
+    .andExpect(jsonPath("id").exist())
+    .andExpect(header().exist(HttpsContent.Location))
+    .andExpect(header().string(HttpsContent.ContentType, MediaTypes.HAL_JSON_VALUE))
+
+
+
+  -entity , dto 의 분리
+    - entity class 에 너무 많은 어노테이션
+    - 값의 변경이 있는 경우에 dto 에서 해결하면 jpa 에서 낭비 연산을 줄일 수 있음. (상황에따라 다름)
+    - 입력받는 값과  실제 값에 괴리가 있는 경우 , 입력은 Dto ,실제는 entity 로 보자.
+
+    - 팁 : ModelMapper
+        - 필드 이름이 같은 경우에 A 클래스 오브젝트 내용을 B 클래스 오브젝트 내용으로 복붙한 새로운 객체를 생성함.
+
+  - mockito 로 해결이 어려운 경우
+    - 파라민터는 DTO, 확인하고 싶은 내용은 dto 인 경우 ,
+    -> 서로 다른 객체기 때문에 mockito.when(class.func(인자))
+    -> 인자 위치에 값을 특정못할수도 있음
+    -> 이러면 어떡하나요?
+        -> 그냥 SpringBootTest 로 바꾸는 것이 도움될 수도 있음.
+        -> 그냥 통합테스트
+        -> springBootTest 를 쓰면 MockMvc 를 쓰려면 @AutoConfigureMockMvc 를 클래스 래밸에 추가,
+    -> 백선생님 말로는 모킹할게 많아지는 웹 부분의 코드는 통합으로 돌리는 경우도 많다고 한다.
+
+
+  -spring-boot-starter-validaters
+    - 컨트롤러에서 인자받는거에서 자동으로 진행되는 내용
+    - 어떤 코드가 작업을 진행하는지는 추후, 기록하겠음
+    - @RequestBody @Valid EventDto eventDto 이렇게 @Valid 어노테이션을 붙이면
+    -
+
+
+  - validators 의 에러
+    - 필드 에러
+        - rejectValue("basePrice","wrongValue","basePrice is too big") -> 에러가 한 부분에서 난 경우
+    - 글로벌 에러
+        -reject("wrongPrices","values are wrong") -> 에러가 전체에서 난 경우( 하나 이상)
+
+
+  - 잘못된 요청의 바디 검증하기 & 검증하기
+    - test 코드
+        - ... andExpect(jsonPath("$[0].ObjectName").exists())
+        .andExpect(jsonPath("$[0].field").exists())
+        .andExpect(jsonPath("$[0].defaultMessage").exists())...
+
+    - Validator 함수에서 제공하는 errors 에서 objectName, field, defaultMessage 를 제공하지만 바로 ResponseEntity 의 인자로 넣어선 안됨
+        - 이유는, Validator 에서 제공하는 Errors 클래스가 자바 빈 스펙을 따르지 않음
+        - 따라서 serialize 할 수 없음
+
+        - 그러면,  serializer 기능을 하는 클래스를 만들면 됨 .
+        - serializer 클래스를 JsonSerializer 클래스를 상속받아 생성하고, @JsonComponent 어노테이션을 붙이면 완성,
+        이후에 JsonSerializer<T> 에 정의된 T 를 serialize 할 때 해당 함수가 실행됨 .
+
+

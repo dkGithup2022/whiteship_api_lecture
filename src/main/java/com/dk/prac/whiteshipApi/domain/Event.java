@@ -1,10 +1,12 @@
-package com.dk.prac.whiteshipApi.entity;
+package com.dk.prac.whiteshipApi.domain;
 
 import lombok.*;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 
+@Entity
 @Getter @Setter
 @EqualsAndHashCode(of = "id")
 @Builder
@@ -22,9 +24,12 @@ public class Event {
     private int maxPrice; // (optional)
     private int limitOfEnrollment;
 
+    @Id @GeneratedValue
     private Integer id;
     private boolean offline;
     private boolean free;
+
+    @Enumerated(EnumType.STRING)
     private EventStatus eventStatus = EventStatus.DRAFT;
 
 

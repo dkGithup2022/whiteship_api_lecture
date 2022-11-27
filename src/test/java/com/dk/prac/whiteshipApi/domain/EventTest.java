@@ -1,4 +1,4 @@
-package com.dk.prac.whiteshipApi.entity;
+package com.dk.prac.whiteshipApi.domain;
 
 import org.junit.jupiter.api.Test;
 
