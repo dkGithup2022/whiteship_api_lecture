@@ -128,3 +128,12 @@
         이후에 JsonSerializer<T> 에 정의된 T 를 serialize 할 때 해당 함수가 실행됨 .
 
 
+  - ParameterizedTest : 테스트 시, 인자를 바꿔가면서 확인하는 경우
+    -@ParameterizedTest, @CsvSource 의 조합으로 인자를 바꿔가며 테스트를 수행 가능 ,
+        예시)
+        @ParameterizedTest(name="{displayName} 's {index} trial :  location:{0}, basePrice : {1} , expected Offline : {2}, expected free {3} ")
+        @CsvSource({"'home',20, false, false", "'',20, true, false","'home',0, false, true"})
+        public void method_test_update(String location, int basePrice, boolean expectedOffline, boolean expectedFree){...}
+
+    - 만약 인자를 CsvSource 로 직접 명시하지 않고 생성해서 쓰는 경우엔, @Parameters ( name = "generationMethod") 와 generationMethod 를 정의한 후 진행해도 된다.
+

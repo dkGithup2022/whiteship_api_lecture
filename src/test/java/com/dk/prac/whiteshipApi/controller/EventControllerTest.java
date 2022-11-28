@@ -55,21 +55,6 @@ class EventControllerTest {
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()))
                 .andDo(print());
 
-
-        /*
-        String 으로 check -> 급하면 이렇게 하는데, 되도록 위의 예시처럼 하자
-        mockMvc.perform(
-                post("/api/events/")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(event))
-        )
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("id").exists())
-                .andExpect(header().exists("Location"))
-                .andExpect(header().string("Content-type","application/json"))
-                .andDo(print());
-         */
     }
 
     @Test
@@ -152,6 +137,56 @@ class EventControllerTest {
                 .andExpect(jsonPath("$[0].rejected").exists())
 
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("event 응답에서 update 생성 필드 확인 : offline, free  -> false")
+    public void testEventUpdatedField() throws Exception{
+        EventDto eventDto =  EventDto.builder()
+                .name("name")
+                .description("description")
+                .beginEnrollmentDateTime(LocalDateTime.of(2022,10,10,10,10))
+                .beginEventDateTime(LocalDateTime.of(2022,10,10,10,10))
+                .closeEnrollmentDateTime(LocalDateTime.of(2022,10,10,10,10))
+                .endEventDateTime(LocalDateTime.of(2022,10,11,10,10))
+                .basePrice(20)
+                .maxPrice(200)
+                .location("강남역")
+                .build();
+
+        mockMvc.perform(
+                post("/api/events")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(eventDto))
+        ).andDo(print())
+        .andExpect(jsonPath("offline").value(false))
+        .andExpect(jsonPath("free").value(false))
+        ;
+    }
+    @Test
+    @DisplayName("event 응답에서 update 생성 필드 확인 : offline, free -> true ")
+    public void testEventUpdatedField2() throws Exception{
+        EventDto eventDto =  EventDto.builder()
+                .name("name")
+                .description("description")
+                .beginEnrollmentDateTime(LocalDateTime.of(2022,10,10,10,10))
+                .beginEventDateTime(LocalDateTime.of(2022,10,10,10,10))
+                .closeEnrollmentDateTime(LocalDateTime.of(2022,10,10,10,10))
+                .endEventDateTime(LocalDateTime.of(2022,10,11,10,10))
+                .basePrice(0)
+                .maxPrice(0)
+                .build();
+
+        mockMvc.perform(
+                post("/api/events")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(eventDto))
+        ).andDo(print())
+                .andExpect(jsonPath("offline").value(true))
+                .andExpect(jsonPath("free").value(true))
+        ;
     }
 }
 
