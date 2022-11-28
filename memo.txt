@@ -137,3 +137,13 @@
 
     - 만약 인자를 CsvSource 로 직접 명시하지 않고 생성해서 쓰는 경우엔, @Parameters ( name = "generationMethod") 와 generationMethod 를 정의한 후 진행해도 된다.
 
+
+  - spring-restdocs 적용하기
+    - org.springframework.restdocs :: spring-restdocs-mockmvc 의존성을 사용한다.
+
+
+TODO : 로깅 따라하기 : https://github.com/taetaetae/request_logging/blob/master/src/main/java/com/taetaetae/request_logging/filter/ReadableRequestWrapperFilter.java
+
+
+TODO: HAL_JSON_VALUE 와 application/json 차이 정리.
+-> 이거 spring rest docs 에서 처리랑 몇몇 표현법이 다른데 ( _link, link 의 차이) 내용 정리가 필요.
