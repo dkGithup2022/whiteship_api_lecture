@@ -142,8 +142,13 @@
     - org.springframework.restdocs :: spring-restdocs-mockmvc 의존성을 사용한다.
 
 
+TODO: asciidoc 예쁘게 정리해보기 .
+
 TODO : 로깅 따라하기 : https://github.com/taetaetae/request_logging/blob/master/src/main/java/com/taetaetae/request_logging/filter/ReadableRequestWrapperFilter.java
 
 
 TODO: HAL_JSON_VALUE 와 application/json 차이 정리.
 -> 이거 spring rest docs 에서 처리랑 몇몇 표현법이 다른데 ( _link, link 의 차이) 내용 정리가 필요.
+
+TODO: https://vnthf.github.io/blog/Spring-Maven-Propertie-%EB%B3%80%EC%88%98-%EC%93%B0%EA%B8%B0/
+-> 메이븐 변수 main/resources/ 에서 관리

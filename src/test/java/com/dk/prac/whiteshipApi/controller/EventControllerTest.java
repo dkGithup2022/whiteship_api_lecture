@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,6 +37,7 @@ class EventControllerTest {
                 .beginEnrollmentDateTime(LocalDateTime.of(2022,10,10,10,10))
                 .beginEventDateTime(LocalDateTime.of(2022,10,10,10,10))
                 .endEventDateTime(LocalDateTime.of(2022,10,11,10,10))
+                .closeEnrollmentDateTime(LocalDateTime.of(2022,10,10,10,10))
                 .basePrice(100)
                 .maxPrice(200)
                 .location("강남역")
@@ -46,13 +48,13 @@ class EventControllerTest {
         mockMvc.perform(
                 post("/api/events/")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .accept(MediaTypes.HAL_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(event))
         )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("id").exists())
                 .andExpect(header().exists(HttpHeaders.LOCATION))
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andDo(print());
 
     }
@@ -73,7 +75,7 @@ class EventControllerTest {
 
         mockMvc.perform(post("/api/events")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaTypes.HAL_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(eventDto))
         )
         .andExpect(status().is4xxClientError())
@@ -99,7 +101,7 @@ class EventControllerTest {
 
         mockMvc.perform(post("/api/events")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaTypes.HAL_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(eventDto))
         )
                 .andExpect(status().is4xxClientError())
@@ -125,7 +127,7 @@ class EventControllerTest {
 
         mockMvc.perform(post("/api/events")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaTypes.HAL_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(eventDto))
         )
                 .andExpect(status().isBadRequest())
@@ -157,7 +159,7 @@ class EventControllerTest {
         mockMvc.perform(
                 post("/api/events")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .accept(MediaTypes.HAL_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(eventDto))
         ).andDo(print())
         .andExpect(jsonPath("offline").value(false))
@@ -181,7 +183,7 @@ class EventControllerTest {
         mockMvc.perform(
                 post("/api/events")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .accept(MediaTypes.HAL_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(eventDto))
         ).andDo(print())
                 .andExpect(jsonPath("offline").value(true))

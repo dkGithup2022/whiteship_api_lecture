@@ -1,7 +1,7 @@
 package com.dk.prac.whiteshipApi.domain.dto;
 
 import com.dk.prac.whiteshipApi.domain.EventStatus;
-import com.sun.istack.NotNull;
+
 import lombok.*;
 
 import javax.persistence.EnumType;
@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 
