@@ -5,12 +5,15 @@ import com.dk.prac.whiteshipApi.domain.dto.EventDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -21,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ExtendWith({SpringExtension.class})
 class EventControllerTest {
     @Autowired
     MockMvc mockMvc;
@@ -29,15 +33,15 @@ class EventControllerTest {
     ObjectMapper objectMapper;
 
     @Test
-    public void createEvent() throws Exception{
+    public void createEvent() throws Exception {
 
         Event event = Event.builder()
                 .name("name")
                 .description("description")
-                .beginEnrollmentDateTime(LocalDateTime.of(2022,10,10,10,10))
-                .beginEventDateTime(LocalDateTime.of(2022,10,10,10,10))
-                .endEventDateTime(LocalDateTime.of(2022,10,11,10,10))
-                .closeEnrollmentDateTime(LocalDateTime.of(2022,10,10,10,10))
+                .beginEnrollmentDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .closeEnrollmentDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .beginEventDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .endEventDateTime(LocalDateTime.of(2022, 10, 11, 10, 10))
                 .basePrice(100)
                 .maxPrice(200)
                 .location("강남역")
@@ -46,8 +50,8 @@ class EventControllerTest {
 
         //enumerated 된 값을 이용한 테스트
         mockMvc.perform(
-                post("/api/events/")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                post("/api/events")
+                        .contentType(MediaTypes.HAL_JSON_VALUE)
                         .accept(MediaTypes.HAL_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(event))
         )
@@ -61,46 +65,46 @@ class EventControllerTest {
 
     @Test
     @DisplayName("create event with bad input / expect code : 400 / no name data caught by valid annotation")
-    public void test_create_event_bad_input() throws Exception{
+    public void test_create_event_bad_input() throws Exception {
         // event info with no name
-        EventDto eventDto =  EventDto.builder()
+        EventDto eventDto = EventDto.builder()
                 .description("description")
-                .beginEnrollmentDateTime(LocalDateTime.of(2022,10,10,10,10))
-                .beginEventDateTime(LocalDateTime.of(2022,10,10,10,10))
-                .endEventDateTime(LocalDateTime.of(2022,10,11,10,10))
+                .beginEnrollmentDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .beginEventDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .endEventDateTime(LocalDateTime.of(2022, 10, 11, 10, 10))
                 .basePrice(100)
                 .maxPrice(200)
                 .location("강남역")
                 .build();
 
         mockMvc.perform(post("/api/events")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaTypes.HAL_JSON_VALUE)
                 .accept(MediaTypes.HAL_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(eventDto))
         )
-        .andExpect(status().is4xxClientError())
-        .andDo(print());
+                .andExpect(status().is4xxClientError())
+                .andDo(print());
     }
 
 
     @Test
     @DisplayName("create event with bad input / expect code : 400 / wrong base price caught by valid()")
-    public void test_create_event_bad_input2() throws Exception{
+    public void test_create_event_bad_input2() throws Exception {
         // event info with no name
-        EventDto eventDto =  EventDto.builder()
+        EventDto eventDto = EventDto.builder()
                 .name("name")
                 .description("description")
-                .beginEnrollmentDateTime(LocalDateTime.of(2022,10,10,10,10))
-                .beginEventDateTime(LocalDateTime.of(2022,10,10,10,10))
-                .closeEnrollmentDateTime(LocalDateTime.of(2022,10,10,10,10))
-                .endEventDateTime(LocalDateTime.of(2022,10,11,10,10))
+                .beginEnrollmentDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .beginEventDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .closeEnrollmentDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .endEventDateTime(LocalDateTime.of(2022, 10, 11, 10, 10))
                 .basePrice(2000)
                 .maxPrice(200)
                 .location("강남역")
                 .build();
 
         mockMvc.perform(post("/api/events")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaTypes.HAL_JSON_VALUE)
                 .accept(MediaTypes.HAL_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(eventDto))
         )
@@ -111,25 +115,26 @@ class EventControllerTest {
 
     @Test
     @DisplayName("create event with bad input / expect code : 400 / check body of response of 400 bad request")
-    public void test_create_event_bad_input3() throws Exception{
+    public void test_create_event_bad_input3() throws Exception {
         // event info with no name
-        EventDto eventDto =  EventDto.builder()
+        EventDto eventDto = EventDto.builder()
                 .name("name")
                 .description("description")
-                .beginEnrollmentDateTime(LocalDateTime.of(2022,10,10,10,10))
-                .beginEventDateTime(LocalDateTime.of(2022,10,10,10,10))
-                .closeEnrollmentDateTime(LocalDateTime.of(2022,10,10,10,10))
-                .endEventDateTime(LocalDateTime.of(2022,10,11,10,10))
+                .beginEnrollmentDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .beginEventDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .closeEnrollmentDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .endEventDateTime(LocalDateTime.of(2022, 10, 11, 10, 10))
                 .basePrice(2000)
                 .maxPrice(200)
                 .location("강남역")
                 .build();
 
         mockMvc.perform(post("/api/events")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaTypes.HAL_JSON_VALUE)
                 .accept(MediaTypes.HAL_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(eventDto))
         )
+
                 .andExpect(status().isBadRequest())
 
                 .andExpect(jsonPath("$[0].objectName").exists())
@@ -143,14 +148,14 @@ class EventControllerTest {
 
     @Test
     @DisplayName("event 응답에서 update 생성 필드 확인 : offline, free  -> false")
-    public void testEventUpdatedField() throws Exception{
-        EventDto eventDto =  EventDto.builder()
+    public void testEventUpdatedField() throws Exception {
+        EventDto eventDto = EventDto.builder()
                 .name("name")
                 .description("description")
-                .beginEnrollmentDateTime(LocalDateTime.of(2022,10,10,10,10))
-                .beginEventDateTime(LocalDateTime.of(2022,10,10,10,10))
-                .closeEnrollmentDateTime(LocalDateTime.of(2022,10,10,10,10))
-                .endEventDateTime(LocalDateTime.of(2022,10,11,10,10))
+                .beginEnrollmentDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .beginEventDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .closeEnrollmentDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .endEventDateTime(LocalDateTime.of(2022, 10, 11, 10, 10))
                 .basePrice(20)
                 .maxPrice(200)
                 .location("강남역")
@@ -158,37 +163,73 @@ class EventControllerTest {
 
         mockMvc.perform(
                 post("/api/events")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaTypes.HAL_JSON_VALUE)
                         .accept(MediaTypes.HAL_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(eventDto))
         ).andDo(print())
-        .andExpect(jsonPath("offline").value(false))
-        .andExpect(jsonPath("free").value(false))
+                .andExpect(jsonPath("offline").value(false))
+                .andExpect(jsonPath("free").value(false))
         ;
     }
+
     @Test
     @DisplayName("event 응답에서 update 생성 필드 확인 : offline, free -> true ")
-    public void testEventUpdatedField2() throws Exception{
-        EventDto eventDto =  EventDto.builder()
+    public void testEventUpdatedField2() throws Exception {
+        EventDto eventDto = EventDto.builder()
                 .name("name")
                 .description("description")
-                .beginEnrollmentDateTime(LocalDateTime.of(2022,10,10,10,10))
-                .beginEventDateTime(LocalDateTime.of(2022,10,10,10,10))
-                .closeEnrollmentDateTime(LocalDateTime.of(2022,10,10,10,10))
-                .endEventDateTime(LocalDateTime.of(2022,10,11,10,10))
+                .beginEnrollmentDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .beginEventDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .closeEnrollmentDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .endEventDateTime(LocalDateTime.of(2022, 10, 11, 10, 10))
                 .basePrice(0)
                 .maxPrice(0)
                 .build();
 
         mockMvc.perform(
                 post("/api/events")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaTypes.HAL_JSON_VALUE)
                         .accept(MediaTypes.HAL_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(eventDto))
         ).andDo(print())
                 .andExpect(jsonPath("offline").value(true))
                 .andExpect(jsonPath("free").value(true))
         ;
+    }
+
+
+    @Test
+    @DisplayName("profile link 생성 확인 ")
+    public void checkProfileLink() throws Exception {
+
+        EventDto eventDto = EventDto.builder()
+                .name("name")
+                .description("description")
+                .beginEnrollmentDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .beginEventDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .closeEnrollmentDateTime(LocalDateTime.of(2022, 10, 10, 10, 10))
+                .endEventDateTime(LocalDateTime.of(2022, 10, 11, 10, 10))
+                .basePrice(0)
+                .maxPrice(0)
+                .build();
+
+        //enumerated 된 값을 이용한 테스트
+        mockMvc.perform(
+                post("/api/events")
+                        .contentType(MediaTypes.HAL_JSON_VALUE)
+                        .accept(MediaTypes.HAL_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(eventDto))
+        )
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("id").exists())
+                .andExpect(header().exists(HttpHeaders.LOCATION))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("_links.profile").exists())
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.update-events").exists())
+                .andExpect(jsonPath("_links.query-events").exists())
+                .andDo(print());
+
     }
 }
 

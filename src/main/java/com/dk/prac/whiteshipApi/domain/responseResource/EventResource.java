@@ -15,5 +15,4 @@ public class EventResource extends RepresentationModel {
     public EventResource (Event event){
         this.event = event;
     }
-
 }

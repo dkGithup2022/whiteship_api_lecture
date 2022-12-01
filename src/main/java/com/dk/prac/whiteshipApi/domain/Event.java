@@ -1,8 +1,8 @@
 package com.dk.prac.whiteshipApi.domain;
 
+import jakarta.persistence.*;
 import lombok.*;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 
@@ -24,7 +24,8 @@ public class Event {
     private int maxPrice; // (optional)
     private int limitOfEnrollment;
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Integer id;
     private boolean offline;
     private boolean free;

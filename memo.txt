@@ -152,3 +152,5 @@ TODO: HAL_JSON_VALUE 와 application/json 차이 정리.
 
 TODO: https://vnthf.github.io/blog/Spring-Maven-Propertie-%EB%B3%80%EC%88%98-%EC%93%B0%EA%B8%B0/
 -> 메이븐 변수 main/resources/ 에서 관리
+
+TODO: mvn pakakge 의 test 에서 restdocstest  문서를 안만듬. -> 플러그인 버전 확인

@@ -5,10 +5,11 @@ import com.dk.prac.whiteshipApi.domain.dto.EventDto;
 import com.dk.prac.whiteshipApi.domain.responseResource.EventResource;
 import com.dk.prac.whiteshipApi.repository.EventRepository;
 import com.dk.prac.whiteshipApi.service.validator.EventValidator;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.validation.Valid;
 import java.net.URI;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -58,10 +58,10 @@ public class EventController {
 
         EventResource eventResource = new EventResource(newEvent);
         eventResource.add(linkTo(EventController.class).withRel("query-events"));
+        eventResource.add(linkTo(EventController.class).withRel("update-events"));
         eventResource.add(linkTo(EventController.class).slash("{id}").withSelfRel());
+        eventResource.add(Link.of("/docs/index.html","profile"));
 
-        //TODO : api 생성 후 uri 변경
-        eventResource.add(linkTo(EventController.class).withRel("update-event"));
         return ResponseEntity.created(createdUri).body(eventResource);
     }
 
